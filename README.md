@@ -48,7 +48,7 @@ Para executar o algoritmo proposto, utilize o seguinte comando abaixo:
 python3 circular-cellular-automaton.py 
 ```
 
-Configure o arquivo ```cell.in```com a entrada desejada, respeitando o padrão apresentado no problema, e o resultado será salvo no arquivo ```cell.out```
+Configure o arquivo ```cell.in``` com a entrada desejada, respeitando o padrão apresentado no problema, e o resultado será salvo no arquivo ```cell.out```
 
 
 
