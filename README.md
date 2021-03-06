@@ -23,9 +23,13 @@ O problema é calcular o estado do ```n,m-automato``` após ```k``` etapas de ``
 
 ## Entrada
 
+arquivo: ```cell.in```
+
 A primeira linha do arquivo de entrada contém quatro números inteiros ```n```, ```m```, ```d``` e ```k``` ```(1 ≤ n ≤ 500, 1 ≤ m ≤ 1 000 000, 0 ≤ d < n/2 , 1 ≤ k ≤ 10.000.000)```. A segunda linha contém ```n``` números inteiros de 0 a ```m``` - 1, representando os valores iniciais das células do autômato.
 
 ## Saída
+
+arquivo: ```cell.out```
 
 Produzir os valores das células do ```n,m-automato``` após após ```k``` etapas de ```d```.
 
