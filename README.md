@@ -36,6 +36,20 @@ Produzir os valores das células do ```n,m-automato``` após após ```k``` etapa
 ## Exemplo de entrada e saída
 <img width="575" alt="Captura de Tela 2021-03-06 às 14 01 28" src="https://user-images.githubusercontent.com/11572814/110214678-75ad3300-7e84-11eb-8d27-9470b4acd952.png">
 
+# Setup
+
+Certifique-se de ter o Python instalado e operando em sua máquina.
+Link de donwload: https://www.python.org/downloads/
+
+#Execução
+
+Para executar o algoritmo proposto, utilize o seguinte comando abaixo: 
+```
+python3 circular-cellular-automaton.py 
+```
+
+Configure o arquivo ```cell.in```com a entrada desejada, respeitando o padrão apresentado no problema, e o resultado será salvo no arquivo ```cell.out```
+
 
 
 
