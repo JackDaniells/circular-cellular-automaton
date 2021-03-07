@@ -28,9 +28,7 @@ class Automaton:
             )
 
     def fillGrid(self, initialValues):
-        for i in range(self.start, self.size+self.start):
-            cell = Cell(position=i, value=initialValues[i - self.start])
-            self.grid.append(cell)
+        self.grid = [Cell(position=i, value=initialValues[i - self.start]) for i in range(self.start, self.size+self.start)]
 
     def nextStep(self):
         newGrid = []
@@ -49,8 +47,7 @@ class Engine:
         self.automaton = automaton
 
     def run(self):
-        for i in range(self.executions):
-            self.automaton.nextStep()
+        map(self.automaton.nextStep(), range(self.executions))
 
 class TestCase:
     def __init__(self, n, m, d, k, i):
@@ -64,19 +61,17 @@ class Reader:
     def __init__(self, inFile, outFile):
         self.inFile = inFile
         self.outFile = outFile
-        self.testCases = []
         self.clearOutput()
 
     def clearOutput(self):
         open(self.outFile, "w").close()
 
     def fillTestCases(self, cellSplit):
-        for i in range(0, len(cellSplit), 2):
-            args = cellSplit[i].split(" ")
-            values = cellSplit[i+1].split(" ")
-            args = [ int(i) for i in args ]
-            values = [ int(i) for i in values ]
-            self.testCases.append(TestCase(n=args[0], m=args[1], d=args[2], k=args[3], i=values))        
+        args = cellSplit[0].split(" ")
+        values = cellSplit[1].split(" ")
+        args = [ int(i) for i in args ]
+        values = [ int(i) for i in values ]
+        self.testCase = TestCase(n=args[0], m=args[1], d=args[2], k=args[3], i=values)      
 
     def readInput(self):
         f = open(self.inFile, "r")
@@ -88,18 +83,17 @@ class Reader:
 
     def writeOutput(self, output):
         f = open(self.outFile, "a")
-        f.write(output)
-        f.write("\n")
+        f.write("%s\n" % output)
         f.close()
 
 
 def main():
     reader = Reader(inFile="cell.in", outFile="cell.out")
     reader.readInput() 
-    for index, test in enumerate(reader.testCases):
-        automaton = Automaton(size=test.n, limit=test.m, distance=test.d, initialValues=test.i)
-        engine = Engine(executions=test.k, automaton=automaton)
-        engine.run()
-        reader.writeOutput(str(automaton))
+    test = reader.testCase
+    automaton = Automaton(size=test.n, limit=test.m, distance=test.d, initialValues=test.i)
+    engine = Engine(executions=test.k, automaton=automaton)
+    engine.run()
+    reader.writeOutput(str(automaton))
 
 main()
