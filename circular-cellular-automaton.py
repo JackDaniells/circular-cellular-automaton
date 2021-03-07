@@ -31,10 +31,7 @@ class Automaton:
         self.grid = [Cell(position=i, value=initialValues[i - self.start]) for i in range(self.start, self.size+self.start)]
 
     def nextStep(self):
-        newGrid = []
-        for cell in self.grid:
-            value=self.calcValue(cell)
-            newGrid.append(Cell(position=cell.position, value=value))
+        newGrid = [Cell(position=cell.position, value=self.calcValue(cell)) for cell in self.grid]
         self.grid = newGrid
 
     def __str__(self):
@@ -47,7 +44,7 @@ class Engine:
         self.automaton = automaton
 
     def run(self):
-        map(self.automaton.nextStep(), range(self.executions))
+        [self.automaton.nextStep() for i in range(self.executions)]
 
 class TestCase:
     def __init__(self, n, m, d, k, i):
