@@ -1,3 +1,5 @@
+INPUT_TERMINAL_METHOD = "terminal"
+INPUT_FILE_METHOD = "file"
 
 class Cell:
     def __init__(self, position, value):
@@ -55,42 +57,66 @@ class TestCase:
         self.i = i
 
 class Reader:
-    def __init__(self, inFile, outFile):
-        self.inFile = inFile
-        self.outFile = outFile
-        self.clearOutput()
+    def __init__(self, method):
+        self.method = method
+        self.testCases = []
+
+        if method == INPUT_FILE_METHOD:
+            self.inFile = "cell.in"
+            self.outFile = "cell.out"
+            self.clearOutput()
+
+
+    def fillTestCases(self, a):
+        cellSplit = []
+        for i in a:
+            if i != "":
+                cellSplit.append(i)
+
+        for i in range (0, len(cellSplit), 2):
+            args = cellSplit[i].split(" ")
+            values = cellSplit[i+1].split(" ")
+            args = [ int(i) for i in args ]
+            values = [ int(i) for i in values ]
+            self.testCases.append(TestCase(n=args[0], m=args[1], d=args[2], k=args[3], i=values))
 
     def clearOutput(self):
-        open(self.outFile, "w").close()
-
-    def fillTestCases(self, cellSplit):
-        args = cellSplit[0].split(" ")
-        values = cellSplit[1].split(" ")
-        args = [ int(i) for i in args ]
-        values = [ int(i) for i in values ]
-        self.testCase = TestCase(n=args[0], m=args[1], d=args[2], k=args[3], i=values)      
+        open(self.outFile, "w").close()      
 
     def readInput(self):
-        f = open(self.inFile, "r")
-        cellIn = f.read()
-        cellSplit = cellIn.splitlines()
+        cellSplit = []
+        if self.method == INPUT_TERMINAL_METHOD:
+            while True:
+                try:
+                    cellSplit.append(input())
+                except:
+                    break
+                    
+        elif self.method == INPUT_FILE_METHOD:
+            f = open(self.inFile, "r")
+            cellIn = f.read()
+            cellSplit = cellIn.splitlines()
+            f.close()
+
         self.fillTestCases(cellSplit)
-        f.close()
-        
 
     def writeOutput(self, output):
-        f = open(self.outFile, "a")
-        f.write("%s\n" % output)
-        f.close()
-
-
+        output = "%s\n" % output
+        if self.method == INPUT_TERMINAL_METHOD:
+            print(output, end='')
+        elif self.method == INPUT_FILE_METHOD:
+            f = open(self.outFile, "a")
+            f.write(output)
+            f.close()
+        
 def main():
-    reader = Reader(inFile="cell.in", outFile="cell.out")
+    # INPUT_TERMINAL_METHOD, INPUT_FILE_METHOD
+    reader = Reader(method=INPUT_TERMINAL_METHOD)
     reader.readInput() 
-    test = reader.testCase
-    automaton = Automaton(size=test.n, limit=test.m, distance=test.d, initialValues=test.i)
-    engine = Engine(executions=test.k, automaton=automaton)
-    engine.run()
-    reader.writeOutput(str(automaton))
-
+    for test in reader.testCases:
+        automaton = Automaton(size=test.n, limit=test.m, distance=test.d, initialValues=test.i)
+        engine = Engine(executions=test.k, automaton=automaton)
+        engine.run()
+        reader.writeOutput(str(automaton))
+    print()
 main()
