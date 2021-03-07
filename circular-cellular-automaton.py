@@ -4,9 +4,6 @@ class Cell:
         self.position = position
         self.value = value
 
-    def __str__(self):
-        return "position=" + str(self.position) + "value=" + str(self.value)
-
 class Automaton:
     def __init__(self, size, distance, limit, initialValues):
         self.start = 1
@@ -16,18 +13,12 @@ class Automaton:
         self.grid = []
         self.fillGrid(initialValues)
     
-    def getNeighbors(self, cell):
-        neighbors = []
+    def calcValue(self, cell):
+        sumValue = 0
         for cellGrid in self.grid:
             d = self.getCellsDistance(cell, cellGrid)
             if d <= self.distance:
-                neighbors.append(cellGrid)
-        return neighbors
-
-    def calcValue(self, neighbors):
-        sumValue = 0
-        for cell in neighbors:
-            sumValue += cell.value
+                sumValue += cellGrid.value
         return sumValue % self.limit
 
     def getCellsDistance(self, cellOne, cellTwo):
@@ -44,19 +35,13 @@ class Automaton:
     def nextStep(self):
         newGrid = []
         for cell in self.grid:
-            neighbors = self.getNeighbors(cell)
-            value=self.calcValue(neighbors)
+            value=self.calcValue(cell)
             newGrid.append(Cell(position=cell.position, value=value))
         self.grid = newGrid
 
     def __str__(self):
-        strAutomaton = ""
-        for index, cell in enumerate(self.grid):
-            if index != 0:
-                strAutomaton += " "
-            strAutomaton += str(cell.value) 
-            
-        return strAutomaton
+        gridParsed = [str(cell.value) for cell in self.grid]
+        return " ".join(gridParsed)
 
 class Engine:
     def __init__(self, executions, automaton):
