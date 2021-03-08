@@ -1,3 +1,5 @@
+from functools import reduce
+
 # Flags para informar se o input é feito via terminal (ICPC) ou via arquivo (CodeForces)
 TERMINAL_METHOD = "terminal"
 FILE_METHOD = "file"
@@ -6,9 +8,10 @@ FILE_METHOD = "file"
 # -------------------------------------- #
 # Classe que representa uma célula do autômato celular
 class Cell:
-    def __init__(self, position, value):
+    def __init__(self, position, value, neighbors):
         self.position = position
         self.value = value
+        self.neighbors = neighbors
 
 
 # -------------------------------------- #
@@ -21,31 +24,37 @@ class Automaton:
         self.limit = limit
         self.grid = []
         self.fillGrid(initialValues)
-    
-    # busca todas as células com distancia >= d para a celula de referencia 
-    # e calcula o novo valor da celula com base na soma dos valores dos vizinhos módulo ordem da célula
-    def calcValue(self, cell):
-        sumValue = 0
-        for cellGrid in self.grid:
-            d = self.getCellsDistance(cell, cellGrid)
-            if d <= self.distance:
-                sumValue += cellGrid.value
-        return sumValue % self.limit
 
-    # calcula a distancia entre duas celulas [min(|i−j|, n−|i−j|)]
-    def getCellsDistance(self, cellOne, cellTwo):
+    # calcula a distancia entre duas posições de celulas [min(|i−j|, n−|i−j|)]
+    def getCellsDistance(self, posOne, posTwo):
         return min(
-            abs(cellOne.position - cellTwo.position), 
-            self.size - abs(cellOne.position - cellTwo.position)
+            abs(posOne - posTwo), 
+            self.size - abs(posOne - posTwo)
             )
+
+    # busca todas as células com distancia >= d para a celula de referencia 
+    def getNeighbors(self, position):
+        neighbors = []
+        for c in self.grid:
+            d = self.getCellsDistance(position, c.position)
+            if d <= self.distance and d != 0:
+                neighbors.append(c.position)
+        return neighbors
+
+    #calcula o novo valor da celula com base na soma dos valores dos vizinhos módulo ordem da célula
+    def calcValue(self, cell):
+        sum = reduce(lambda s, n: s + self.grid[n - self.start].value, cell.neighbors, cell.value)
+        return sum % self.limit
 
     # preenche a lista circular de células com o valor inicial passado no imput
     def fillGrid(self, initialValues):
-        self.grid = [Cell(position=i, value=initialValues[i - self.start]) for i in range(self.start, self.size+self.start)]
+        self.grid = [Cell(position=i, value=initialValues[i - self.start], neighbors=[]) for i in range(self.start, self.size+self.start)]
+        for c in self.grid:
+            c.neighbors = self.getNeighbors(c.position)
 
     # executa os calculos de distância entre as células e atualiza a lista
     def nextStep(self):
-        newGrid = [Cell(position=cell.position, value=self.calcValue(cell)) for cell in self.grid]
+        newGrid = [Cell(position=cell.position, value=self.calcValue(cell), neighbors=cell.neighbors) for cell in self.grid]
         self.grid = newGrid
 
     # converte os valores das celulas para string
@@ -143,7 +152,8 @@ class I0Manager:
 # -------------------------------------- #
 def main():
     # instancia o objeto responsavel pela leitura dos arquivos
-    io = I0Manager(method=TERMINAL_METHOD)# tipos de metodos possiveis: (TERMINAL_METHOD, FILE_METHOD)
+    # tipos de metodos possiveis: (TERMINAL_METHOD, FILE_METHOD)
+    io = I0Manager(method=FILE_METHOD)
     # le a entrada de dados e retorna os casos de teste
     testCases = io.readInput() 
     for test in testCases:
