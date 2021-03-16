@@ -44,7 +44,8 @@ class Automaton:
     #calcula o novo valor da celula com base na soma dos valores dos vizinhos módulo ordem da célula
     def calcValue(self, cell):
         sum = reduce(lambda s, n: s + self.grid[n - self.start].value, cell.neighbors, cell.value)
-        return sum % self.limit
+        value = sum % self.limit
+        return value
 
     # preenche a lista circular de células com o valor inicial passado no imput
     def fillGrid(self, initialValues):
@@ -159,8 +160,10 @@ def main():
     for test in testCases:
         # monta o automato celular
         automaton = Automaton(size=test.n, limit=test.m, distance=test.d, initialValues=test.i)
+        # k = k % (n + m)
+        execs = test.k % (test.n + test.m)
         # inicia a engine
-        engine = Engine(executions=test.k, automaton=automaton)
+        engine = Engine(executions=execs, automaton=automaton)
         # executa os steps (k)
         engine.run()
         # escreve o retorno
